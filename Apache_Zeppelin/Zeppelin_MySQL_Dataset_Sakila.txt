@@ -1,0 +1,54 @@
+Zeppelin_MySQL_Dataset_Sakila
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SELECT 	c.customer_id AS 'Customer ID', 
+		c.first_name AS 'First Name', 
+		c.last_name AS 'Last Name', 
+        SUM(amount) AS 'Total Paid'
+FROM sakila.payment p
+	INNER JOIN customer c ON
+	p.customer_id = c.customer_id
+GROUP BY c.customer_id;
+
+use 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Actor and film count
+~~~~~~~~~~~~~~~~~~~~
+select actor.actor_id, actor.first_name, actor.last_name,
+       count(actor_id) as film_count
+from actor join film_actor using (actor_id)
+group by actor_id
+order by film_count desc
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`````
+Film category and average length
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+select category.name, avg(length)
+from film join film_category using (film_id) join category using (category_id)
+group by category.name
+order by avg(length) desc;
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Overdue in days
+
+SELECT first_name, last_name, title, (DATEDIFF(return_date, rental_date) - rental_duration) AS daysOverdue
+FROM customer
+JOIN rental USING (customer_id)
+JOIN inventory USING (inventory_id)
+JOIN film USING (film_id)
+WHERE rental_duration < DATEDIFF(return_date, rental_date);
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+customer payment for each year
+
+SELECT first_name,last_name, total, rentyear 
+FROM (
+SELECT customer_id, SUM(amount) AS total, YEAR(payment_date) as rentyear
+FROM sakila.payment JOIN sakila.customer USING(customer_id)
+GROUP BY customer_id, YEAR(payment_date)) total_alias
+INNER JOIN sakila.customer scu ON total_alias.customer_id=scu.customer_id
+ORDER BY total DESC

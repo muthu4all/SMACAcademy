@@ -1,0 +1,14 @@
+Zeppelin_Interpreter_hdfs
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+hdfs.url -> http://node2:50070/webhdfs/v1/
+hdfs.user -> hdfs
+hdfs.maxlength -> 1000
+
+
+Check : 
+curl "http://node2:50070/webhdfs/v1/?op=LISTSTATUS"
+
+
+%hdfs
+ls /

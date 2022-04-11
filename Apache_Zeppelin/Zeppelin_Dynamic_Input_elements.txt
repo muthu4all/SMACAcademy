@@ -1,0 +1,184 @@
+Zeppelin_Dynamic_Input_elements
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4_2_Dynamic_forms
+~~~~~~~~~~~~~~~~~
+
+Text Form with Default Value
+
+
+%md Hello ${name}
+
+%md Hello ${name=Input Here}
+
+
+Select Form
+
+%md Current status of the job :: ${status=Select Status,Open|In Progress|Closed}
+
+
+
+Checkbox
+
+%md Preferred languages are ${checkbox:languages=Scala|Python,Scala|Python|Java|R} for Big Data Projects
+
+Checkbox with delimiter
+
+%md Preferred languages are ${checkbox( and ):languages=Scala|Python,Scala|Python|Java|R} for Big Data Projects
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+Run on selection option
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+Scope:Note
+
+Double $$
+
+%md Hello $${name}
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+
+Programmatically : Scope : Paragraph
+
+%spark
+println("Hello "+z.textbox("name"))
+
+
+%pyspark
+print("Hello "+z.textbox("name"))
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Text input with default values
+
+%spark
+println("Hello "+z.textbox("name", "sun")) 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+select form
+
+%spark
+println("Hello "+z.select("day", Seq(("1","mon"),
+                                    ("2","tue"),
+                                    ("3","wed"),
+                                    ("4","thurs"),
+                                    ("5","fri"),
+                                    ("6","sat"),
+                                    ("7","sun"))))
+                                    
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+
+%spark
+val options = Seq(("apple","Apple"), ("banana","Banana"), ("orange","Orange"))
+println("Hello "+z.checkbox("fruit", options).mkString(" and "))
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Note Scope
+
+%pyspark
+
+print("Textbox paragraph" + z.textbox("input","default"))
+
+print("Textbox Note" + z.noteTextbox("note_input","default_note"))
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~```````
+
+
+Paragraph and Note Scope
+
+%pyspark
+
+print("Textbox paragraph " + z.textbox('input', 'default'))
+print("Textbox note " + z.noteTextbox('note_input', 'default_note'))
+
+print("Select paragraph " + z.select("sel", [("1","opt1"), ("2","opt2"), ("3","opt3")]))
+print("Select note " + z.noteSelect("sel_note", [("1","noteOpt1"), ("2","noteOpt2"), ("3","noteOpt3")]))
+
+options = [("key1","Name1"), ("key2","Name2")]
+print("Checkbox paragraph "+ " and ".join(z.checkbox("chk", options, ["key1"])))
+print("Checkbox note "+ " and ".join(z.noteCheckbox("chk_note", options, ["key1","key2"])))
+```
+```
+%jdbc
+
+select '$${checkbox:chk_note=key1|key2,key1|key2} $${note_input} ${note_input=sameName}'
+```
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+val df = Seq((1,2,"A"),(3,4,"B"),(3,2,"B")).toDF("x","y","item")
+df.registerTempTable("table_name")
+val instrument = z.select("Select Item", Seq(("A", "1"),("B", "2"),("C", "3")))
+
+%sql select * from table_name where item="${item=A,A|B|C}" 
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+%mysql
+use sakila;
+
+select category.name, avg(length)
+from film join film_category using (film_id) join category using (category_id)
+group by category.name
+order by avg(length) $${Arrange By=desc,asc|desc};
+
+
+
+
+SELECT first_name,last_name, total, rentyear 
+FROM (
+SELECT customer_id, SUM(amount) AS total, YEAR(payment_date) as rentyear
+FROM sakila.payment JOIN sakila.customer USING(customer_id)
+GROUP BY customer_id, YEAR(payment_date)) total_alias
+INNER JOIN sakila.customer scu ON total_alias.customer_id=scu.customer_id
+ORDER BY total $${Arrange By=desc,asc|desc}
+
+
+
+
+select * from sakila.customer limit
+
+
+
+
+
+
+
+
+Use Case
+
+
+def list(table: String, col: String) : Array[(String, String)] = {
+  sqlContext.sql("select distinct " + col + " from " + table + " order by " + col).collect.map(x => (x(0).asInstanceOf[String], x(0).asInstanceOf[String]))
+}
+
+def tables(): Array[(String, String)] = {
+ sqlContext.sql("show tables").collect.map(x => (x(0).asInstanceOf[String], x(0).asInstanceOf[String]))
+}
+
+def columns(table: String) : Array[(String, String)] = {
+  sqlContext.sql("select * from " + table + " limit 0").columns.map(x => (x, x))
+}
+
+val table = z.select("table", tables()).asInstanceOf[String]
+val col1 = z.select("col1", columns(table))
+val col2 = z.select("col2", columns(table))
+val query = "select " + col1 + "," + col2 + ", count(*) as count from " + table + " group by " + col1 + "," + col2 + " order by count desc"
+val df = sqlContext.sql(query)
+println("%table " + df.columns.mkString("\t"))
+println(df.map(x => x.mkString("\t")).collect().mkString("\n"))
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

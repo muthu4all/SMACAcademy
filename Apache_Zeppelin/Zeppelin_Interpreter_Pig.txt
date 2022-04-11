@@ -1,0 +1,55 @@
+Zeppelin_Interpreter_Pig
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+%pig
+user = load '/ml-1m-zep/users.t' using PigStorage('#') as (userid:int, gender:chararray, age:int, occupation:int, zip:chararray);
+userdata = foreach user generate userid , gender , age ,occupation , zip;
+
+ratings = load '/ml-1m-zep/ratings.t' using PigStorage('#') as (userid:int, movieid:int, ratings:int, timestamp:int) ;
+ratingsdata = foreach ratings generate (userid,movieid,ratings,timestamp) ; 
+
+
+movie = load '/ml-1m-zep/movies.t' using PigStorage('#') as (movieid:int, title:chararray, genres:chararray) ;
+movielist = foreach movie generate movieid, title, genres ;
+
+
+%pig.query
+groupedGender = group userdata by gender;
+foreach groupedGender generate group, COUNT(userdata);
+
+
+
+%pig.query
+youngUsers = filter userdata by age < ${maxAge=40}; 
+groupedYoungUsers = group youngUsers by age;
+foreach groupedYoungUsers generate group, COUNT(youngUsers);
+
+
+
+
+
+
+
+%pig.query
+sample userdata 0.01 ;
+
+
+
+
+ 
+%pig.query
+sample  0.0001 ;
+
+
+
+%pig.query
+joinedData = join userdata by userid, ratings by userid ;
+groupedByGender = group joinedData by gender;
+foreach groupedByGender generate group, AVG(joinedData.ratings);
+
+%pig.query
+groupedByGenre = group moviedata by genres;
+foreach groupedByGenre generate group, COUNT(moviedata);
+
+

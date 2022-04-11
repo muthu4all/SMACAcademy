@@ -1,0 +1,40 @@
+Zeppelin_Introduction
+~~~~~~~~~~~~~~~~~~~~~
+
+wget http://archive.ics.uci.edu/ml/machine-learning-databases/00222/bank.zip
+
+
+unzip bank.zip
+
+hdfs dfs -mkdir /sample_data
+hdfs dfs -mkdir /sample_data/bank_data
+
+hdfs dfs -put * /sample_data/bank_data/
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+hdfs dfs -tail hdfs://node2:8020/sample_data/bank_data/bank-full.csv
+
+
+val bankText = sc.textFile("hdfs://node2:8020/sample_data/bank_data/bank-full.csv")
+
+case class Bank(age:Integer, job:String, marital : String, education : String, balance : Integer)
+
+// split each line, filter out header (starts with "age"), and map it into Bank case class
+val bank = bankText.map(s=>s.split(";")).filter(s=>s(0)!="\"age\"").map(
+    s=>Bank(s(0).toInt, 
+            s(1).replaceAll("\"", ""),
+            s(2).replaceAll("\"", ""),
+            s(3).replaceAll("\"", ""),
+            s(5).replaceAll("\"", "").toInt
+        )
+)
+
+// convert to DataFrame and create temporal table
+bank.toDF().registerTempTable("bank")
+
+%sql select age, count(1) from bank where age < 30 group by age order by age
+
+%sql select age, count(1) from bank where age < ${maxAge=30} group by age order by age
+%sql select age, count(1) from bank where marital="${marital=single,single|divorced|married}" group by age order by age
+

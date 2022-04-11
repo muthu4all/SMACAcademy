@@ -1,0 +1,23 @@
+Zeppelin_Python_Interpreter_pandas
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+export PATH="/root/miniconda2/bin:$PATH"
+
+conda install pandas
+conda install -c anaconda pandasql
+
+
+#restart zeppelin
+
+
+
+
+%python
+
+import pandas as pd
+rates = pd.read_csv("/root/data/bank/bank.csv", sep=";")
+
+%python.sql
+SELECT * FROM rates WHERE age < 40
+
+

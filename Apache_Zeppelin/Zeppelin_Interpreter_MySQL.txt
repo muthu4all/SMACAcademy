@@ -1,0 +1,30 @@
+Zeppelin_Interpreter_MySQL
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+default.driver	com.mysql.jdbc.Driver
+default.url	jdbc:mysql://192.168.0.101:3306/
+default.user	root
+default.password	password
+
+common.max_count	10000
+
+
+mysql:mysql-connector-java:5.1.38
+
+
+
+
+
+%md
+## Introduction
+In this tutorial we will go through some of the basic features of Zeppelin's JDBC Interpreter binding.. 
+
+### Prerequisites
+Running MySQL database
+
+### Interpreters
+JDBC Interpreter with MYSQL configuration
+ 
+### A simple example
+Let's start by making a simple Query
+

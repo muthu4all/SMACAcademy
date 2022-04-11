@@ -1,0 +1,32 @@
+Zeppelin_Installation
+~~~~~~~~~~~~~~~~~~~~~
+
+
+wget http://mirrors.fibergrid.in/apache/zeppelin/zeppelin-0.8.0/zeppelin-0.8.0-bin-all.tgz
+
+tar -xvf zeppelin-0.8.0-bin-all.tgz
+
+
+
+ln -s zeppelin-0.8.0-bin-all zeppelin
+
+vi .bashrc
+export JAVA_HOME=/usr/lib/jvm/java-1.7.0-openjdk.x86_64/
+export ZEPPELIN_HOME=/usr/local/zeppelin
+
+
+export JAVA_HOME=/usr/java/jdk1.7.0_67-cloudera/
+
+source .bashrc
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+cd $ZEPPELIN_HOME
+
+bin/zeppelin-daemon.sh start
+
+bin/zeppelin-daemon.sh stop
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+cp zeppelin-site.xml.template zeppelin-site.xml

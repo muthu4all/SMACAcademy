@@ -1,0 +1,20 @@
+Zeppelin_Interpreter_Hive
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+JDBC Interprter
+
+hive.driver	org.apache.hive.jdbc.HiveDriver
+hive.url	jdbc:hive2://node2:10000
+hive.user	hive
+hive.password	hive
+
+
+maven artifacts dependencies
+
+org.apache.hive:hive-jdbc:0.14.0
+org.apache.hadoop:hadoop-common:2.6.0	
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+

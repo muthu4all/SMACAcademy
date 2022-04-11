@@ -1,0 +1,95 @@
+Zeppelin_Interpreter_Spark
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+spark.cores.max 	2
+spark.executor.memory	512
+master			yarn-client
+
+conf/zeppelin-env.sh
+
+
+export SPARK_HOME=/opt/cloudera/parcels/CDH/lib/spark
+export HADOOP_HOME=/opt/cloudera/parcels/CDH/lib/hadoop
+export HADOOP_CONF_DIR=/etc/hadoop/conf
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+show databases
+
+use movielens
+
+cache table ratings
+cache table movies
+cache table users
+cache table occupations
+
+SELECT occupations.occupation, count(*)FROM users
+JOIN ratings ON(ratings.userid=users.userid)
+JOIN occupations on(users.occupation=occupations.id)
+WHERE rating=5
+GROUP BY occupations.occupation
+
+
+
+
+=> for each occupation and gender ratings of 5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT gender, occupations.occupation,count(*) FROM users
+JOIN occupations ON(occupations.id=users.occupation)
+JOIN ratings ON(ratings.userid=users.userid)
+WHERE rating=5
+GROUP BY occupations.occupation,gender
+
+=> for each occupation and gender ratings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT rating, gender, occupations.occupation,count(*) FROM users
+JOIN occupations ON(occupations.id=users.occupation)
+JOIN ratings ON(ratings.userid=users.userid)
+GROUP BY occupations.occupation,gender, rating
+
+=> Rating based on Age
+~~~~~~~~~~~~~~~~~~~~~~
+SELECT users.age,count(*) FROM ratings
+JOIN users ON(ratings.userid=users.userid)
+WHERE rating=5
+GROUP BY users.age
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+2 Effect of Occupation on Ratings
+
+SELECT o.occupation, count(*)
+FROM ratings r, occupations o, users u
+WHERE r.userid = u.userid
+AND o.id = u.occupation
+AND r.rating = 5
+GROUP BY o.occupation
+
+Effect of age on ratings
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SELECT r.rating,u.age, count(*)
+FROM ratings r, users u
+WHERE r.userid = u.userid
+GROUP BY u.age,r.rating
+
+Effect of age, occupation
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SELECT o.occupation, u.age, COUNT(*)
+FROM users u, occupations o, ratings r
+WHERE r.userid = u.userid
+AND o.id = u.occupation
+GROUP BY o.occupation, u.age
+
+
+
+Effect of occupation on ratings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT o.occupation, gender, COUNT(*)
+FROM users u, occupations o, ratings r
+WHERE r.userid = u.userid
+AND o.id = u.occupation
+GROUP BY o.occupation, gender
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

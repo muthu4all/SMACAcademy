@@ -1,0 +1,56 @@
+Zeppelin_Dynamic_Input_element_Usecase
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+%md Data Arrangement :: $${Arrange By=desc,asc|desc}
+
+%md Data Arrangement :: $${Ratings=5,1|2|3|4|5}
+
+
+use movielens
+
+cache table ratings
+cache table movies
+cache table users
+cache table occupations
+
+
+
+
+
+for each occupation count of rating 5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT occupations.occupation, count(*)FROM users
+JOIN ratings ON(ratings.userid=users.userid)
+JOIN occupations on(users.occupation=occupations.id)
+WHERE rating=$${Ratings=5,1|2|3|4|5}
+GROUP BY occupations.occupation
+
+
+=> for each occupation and gender ratings of 5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT gender, occupations.occupation,count(*) FROM users
+JOIN occupations ON(occupations.id=users.occupation)
+JOIN ratings ON(ratings.userid=users.userid)
+WHERE rating=$${Ratings=5,1|2|3|4|5}
+GROUP BY occupations.occupation,gender
+
+
+
+
+=> Rating based on Age
+~~~~~~~~~~~~~~~~~~~~~~
+SELECT users.age,count(*) FROM ratings
+JOIN users ON(ratings.userid=users.userid)
+WHERE rating=$${Ratings=5,1|2|3|4|5}
+GROUP BY users.age
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+2 Effect of Occupation on Ratings
+
+SELECT o.occupation, count(*)
+FROM ratings r, occupations o, users u
+WHERE r.userid = u.userid
+AND o.id = u.occupation
+AND r.rating = $${Ratings=5,1|2|3|4|5}
+GROUP BY o.occupation
+

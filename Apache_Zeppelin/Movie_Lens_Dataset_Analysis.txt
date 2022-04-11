@@ -1,0 +1,152 @@
+Movie_Lens_Dataset_Analysis
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+%hive(hive)
+
+drop database movielens CASCADE
+create database movielens
+show databases
+use movielens
+
+CREATE TABLE ratings (
+  userid INT, 
+  movieid INT,
+  rating INT, 
+  tstamp STRING
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '#'
+STORED AS TEXTFILE
+
+
+CREATE TABLE movies (
+  movieid INT, 
+  title STRING,
+  genres ARRAY<STRING>
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '#'
+COLLECTION ITEMS TERMINATED BY "|"
+STORED AS TEXTFILE
+
+CREATE TABLE users (
+  userid INT, 
+  gender STRING, 
+  age INT,
+  occupation INT,
+  zipcode STRING
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '#'
+STORED AS TEXTFILE
+
+CREATE TABLE occupations (
+  id INT,
+  occupation STRING
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY '#'
+STORED AS TEXTFILE
+
+
+hdfs dfs -put /root/sample_data/ml-1m-zep /ml-1m-zep
+
+hdfs dfs -ls /ml-1m-zep
+
+
+LOAD DATA INPATH '/ml-1m-zep/ratings.t' OVERWRITE INTO TABLE ratings
+LOAD DATA INPATH '/ml-1m-zep/movies.t' OVERWRITE INTO TABLE movies
+LOAD DATA INPATH '/ml-1m-zep/users.t' OVERWRITE INTO TABLE users
+LOAD DATA INPATH '/ml-1m-zep/occupation.dat' OVERWRITE INTO TABLE occupations
+
+
+drop table ratings;
+drop table movies;
+drop table users;
+drop table occupations;
+
+
+CREATE TABLE rating_full
+as
+select 
+  r.*, 
+  m.title as m_title,
+  concat_ws('|',sort_array(m.genres)) as m_genres, 
+  u.gender as u_gender,
+  u.age as u_age,
+  u.occupation as u_occupation,
+  u.zipcode as u_zipcode
+from
+  ratings r 
+  JOIN movies m ON (r.movieid = m.movieid)
+  JOIN users u ON (r.userid = u.userid)
+  
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  
+describe rating_full  
+
+for each occupation count of rating 5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT occupations.occupation, count(*)FROM users
+JOIN ratings ON(ratings.userid=users.userid)
+JOIN occupations on(users.occupation=occupations.id)
+WHERE rating=5
+GROUP BY occupations.occupation
+
+
+=> for each occupation and gender ratings of 5
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT gender, occupations.occupation,count(*) FROM users
+JOIN occupations ON(occupations.id=users.occupation)
+JOIN ratings ON(ratings.userid=users.userid)
+WHERE rating=5
+GROUP BY occupations.occupation,gender
+
+=> for each occupation and gender ratings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT rating, gender, occupations.occupation,count(*) FROM users
+JOIN occupations ON(occupations.id=users.occupation)
+JOIN ratings ON(ratings.userid=users.userid)
+GROUP BY occupations.occupation,gender, rating
+
+=> Rating based on Age
+~~~~~~~~~~~~~~~~~~~~~~
+SELECT users.age,count(*) FROM ratings
+JOIN users ON(ratings.userid=users.userid)
+WHERE rating=5
+GROUP BY users.age
+
+~~~~~~~~~~~~~~~~~~~~~~~~~
+2 Effect of Occupation on Ratings
+
+SELECT o.occupation, count(*)
+FROM ratings r, occupations o, users u
+WHERE r.userid = u.userid
+AND o.id = u.occupation
+AND r.rating = 5
+GROUP BY o.occupation
+
+Effect of age on ratings
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SELECT r.rating,u.age, count(*)
+FROM ratings r, users u
+WHERE r.userid = u.userid
+GROUP BY u.age,r.rating
+
+Effect of age, occupation
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+SELECT o.occupation, u.age, COUNT(*)
+FROM users u, occupations o, ratings r
+WHERE r.userid = u.userid
+AND o.id = u.occupation
+GROUP BY o.occupation, u.age
+
+
+
+Effect of occupation on ratings
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SELECT o.occupation, gender, COUNT(*)
+FROM users u, occupations o, ratings r
+WHERE r.userid = u.userid
+AND o.id = u.occupation
+GROUP BY o.occupation, gender
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
