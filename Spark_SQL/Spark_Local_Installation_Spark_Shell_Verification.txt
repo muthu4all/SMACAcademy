@@ -1,0 +1,32 @@
+Spark_Local_Installation_Spark_Shell_Verification
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+sudo yum -y install java-1.8.0-openjdk-devel
+
+
+https://spark.apache.org/downloads.html
+
+wget http://mirrors.fibergrid.in/apache/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz
+
+mv spark-2.3.1-bin-hadoop2.7 spark
+
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk/
+
+
+/home/ec2-user/spark_install/spark
+
+./bin/spark-shell
+val textFile = spark.read.textFile("README.md")
+textFile.count()
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./bin/pyspark
+
+textFile = spark.read.text("README.md")
+textFile.count()
+
+quit()
+
+~~~~~~~~~~~~~~~~~~~~~~
+

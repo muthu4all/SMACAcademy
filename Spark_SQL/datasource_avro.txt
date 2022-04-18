@@ -1,0 +1,26 @@
+datasource_avro
+~~~~~~~~~~~~~~~
+
+spark-shell --packages com.databricks:spark-avro_2.11:4.0.0
+
+
+
+import com.databricks.spark.avro._
+
+val zipDF = spark.read.json("/root/sample_data/zips.json")
+
+zipDF.write.avro("/root/work/zip_as_avro3.avro")
+
+
+spark.conf.set("spark.sql.avro.compression.codec", "deflate")
+spark.conf.set("spark.sql.avro.deflate.level", "8")
+
+zipDF.write.avro("/root/work/zip_as_avro3_compressed.avro")
+
+
+
+import com.databricks.spark.avro._
+
+val zipfromAvroDF = spark.read.avro("/root/work/zip_as_avro3.avro")
+
+zipfromAvroDF.show

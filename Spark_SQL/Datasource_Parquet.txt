@@ -1,0 +1,13 @@
+Datasource_Parquet
+~~~~~~~~~~~~~~~~~~
+
+val zipDF = spark.read.json("/root/sample_data/zips.json")
+
+zipDF.write.parquet("/root/work/zip_as_parquet")
+
+
+
+val zipfromParquetDF = spark.read.parquet("/root/work/zip_as_parquet")
+
+zipfromParquetDF.show
+

@@ -1,0 +1,30 @@
+Spark_Warehouse_Dir
+~~~~~~~~~~~~~~~~~~~
+
+./spark-sql --master spark://node5:7077 --conf "spark.sql.warehouse.dir=hdfs://node2:8020/user/root/spark/warehouse"
+
+
+drop database mydb0_hdfs cascade;
+
+CREATE DATABASE IF NOT EXISTS mydb0_hdfs;
+
+describe database mydb0_hdfs;
+
+
+use mydb0_hdfs;
+
+CREATE TABLE mydb0_hdfs.sample_07 (code string,description string,total_emp int,salary int) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' STORED AS TextFile;
+
+LOAD DATA LOCAL INPATH '/root/sample_data/sample_07.csv' OVERWRITE INTO TABLE mydb0_hdfs.sample_07;
+
+
+select count(*) from mydb0_hdfs.sample_07;
+
+describe formatted mydb0_hdfs.sample_07;
+
+hdfs dfs -ls hdfs://node2:8020/user/root/spark/warehouse/mydb0_hdfs.db/sample_07
+
+hdfs dfs -put /root/sample_data/sample_07.csv hdfs://node2:8020/user/root/spark/warehouse/mydb0_hdfs.db/sample_07/manual_copy.csv
+
+hdfs dfs -ls hdfs://node2:8020/user/root/spark/warehouse/mydb0_hdfs.db/sample_07
+

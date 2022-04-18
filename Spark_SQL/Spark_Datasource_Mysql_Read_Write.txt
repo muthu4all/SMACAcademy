@@ -1,0 +1,17 @@
+Spark_Datasource_Mysql_Read_Write
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+spark-shell --jars /root/spark/mysql-connector-java-5.1.47/mysql-connector-java-5.1.47-bin.jar
+
+val dataframe_mysql = spark.read.format("jdbc").option("url", "jdbc:mysql://192.168.0.103:3306/employees").option("driver", "com.mysql.jdbc.Driver").option("dbtable", "employees").option("user", "mysqluser").option("password", "mysqluser").option("useSSL", "false").load()
+
+dataframe_mysql.show()
+
+
+dataframe_mysql.createOrReplaceTempView("employees")
+
+val top_10_emp = spark.sql("select emp_no, first_name, last_name, gender from employees order by hire_date desc limit 10")
+
+top_10_emp.show()
+
+top_10_emp.write.format("jdbc").option("url", "jdbc:mysql://192.168.0.101:3306/employees").option("driver", "com.mysql.jdbc.Driver").option("dbtable", "top_employees").option("user", "mysqluser").option("password", "mysqluser").mode("overwrite").option("useSSL", "false").save()

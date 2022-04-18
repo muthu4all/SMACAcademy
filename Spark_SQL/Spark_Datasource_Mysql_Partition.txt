@@ -1,0 +1,6 @@
+Spark_Datasource_Mysql_Partition
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+val dataframe_mysql = spark.read.format("jdbc").option("url", "jdbc:mysql://192.168.0.101:3306/employees").option("driver", "com.mysql.jdbc.Driver").option("dbtable", "employees").option("user", "mysqluser").option("password", "mysqluser").option("useSSL", "false").option("numPartitions", "10").option("lowerBound", "10").option("upperBound", "10000").option("partitionColumn", "emp_no").load()
+
+dataframe_mysql.show()

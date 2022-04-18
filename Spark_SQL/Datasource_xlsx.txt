@@ -1,0 +1,12 @@
+Datasource_xlsx
+~~~~~~~~~~~~~~~
+
+sample data : http://go.microsoft.com/fwlink/?LinkID=521962
+
+spark-shell --packages com.crealytics:spark-excel_2.11:0.9.17 
+
+val excelDataDF = spark.read.format("com.crealytics.spark.excel").option("sheetName", "Sheet1").option("useHeader", "true").option("inferSchema", "true").load("/root/data/Financial_Sample.xlsx")
+
+excelDataDF.show(false)
+
+excelDataDF.write.format("com.crealytics.spark.excel").option("sheetName", "Daily").option("useHeader", "true").mode("overwrite").save("/root/work/DataFrameasXLS1.xlsx")

@@ -1,0 +1,32 @@
+Datasource_JSON
+~~~~~~~~~~~~~~~
+
+val zipDF = spark.read.json("/root/sample_data/zips.json")
+zipDF.printSchema
+
+zipDF.createOrReplaceTempView("zipTable")
+
+val statezipDF =spark.sql("select state, count(city) from zipTable group by state")
+
+statezipDF.count
+
+statezipDF.show
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+http://mysafeinfo.com/api/data?list=englishmonarchs&format=json
+
+
+val multiLineJsonRDD = sc.wholeTextFiles("/root/data/multilinejson.json").map(_._2)
+val multiLineJsonRDDDS = spark.read.json(multiLineJsonRDD)
+:warnings
+
+
+
+
+val multiLineJsonRDDDS = spark.createDataset(multiLineJsonRDD)
+val multilineJsonDF = spark.read.json(multiLineJsonRDDDS)
+multilineJsonDF.show
+multilineJsonDF.printSchema
+
+

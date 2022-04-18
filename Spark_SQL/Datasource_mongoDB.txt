@@ -1,0 +1,35 @@
+Datasource_mongoDB
+~~~~~~~~~~~~~~~~~~
+
+mlab.com
+
+http://media.mongodb.org/zips.json
+
+wget https://fastdl.mongodb.org/linux/mongodb-linux-x86_64-3.2.21.tgz
+
+tar -zxvf mongodb-linux-x86_64-3.2.21.tgz
+mkdir -p mongodb
+cp -R -n mongodb-linux-x86_64-3.2.21/ mongodb
+
+export PATH=<mongodb-install-directory>/bin:$PATH
+
+wget http://media.mongodb.org/zips.json
+
+
+mongoimport -h <<hostname>>:51402 -d spark_mongo -c zips3 -u <<username>> --file <<json file path>>
+
+
+spark-shell --packages org.mongodb.spark:mongo-spark-connector_2.11:2.3.0
+
+
+import com.mongodb.spark._
+import com.mongodb.spark.config.ReadConfig
+import com.mongodb.spark.sql._
+
+val readConfig = ReadConfig(Map("uri" -> "mongodb://<<username>>:<<pwd>>@<<host>>:51402/spark_mongo.zips3?readPreference=primaryPreferred"))
+                  
+
+
+val zipDf = spark.read.mongo(readConfig)
+zipDf.printSchema()
+zipDf.show()    

@@ -1,0 +1,23 @@
+Spark_ExternalTable_From_CSV
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+spark-sql --master spark://node5:7077 --conf "spark.sql.warehouse.dir=hdfs://node2:8020/user/root/spark/warehouse"
+
+
+drop database mydb_types cascade;
+
+CREATE DATABASE IF NOT EXISTS mydb_types;
+
+describe database mydb_types;
+
+
+use mydb_types;
+
+
+CREATE TABLE mydb_types.team_info(`team_id` int, `franchiseId` int, `shortName` string, `teamName` string, `abbreviation` string, `link` string)  using csv options ( header true, path 'hdfs://node2:8020/sparksql/data/nhl-game-data/team_info.csv');
+
+
+CREATE TABLE mydb_types.team_info_another(`team_id` int, `franchiseId` int, `shortName` string, `teamName` string, `abbreviation` string, `link` string)  using csv options ( header true, path 'hdfs://node2:8020/sparksql/data/nhl-game-data/team_info.csv');
+
+
+SHOW CREATE TABLE mydb_types.team_info;

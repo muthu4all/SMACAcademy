@@ -1,0 +1,16 @@
+Spark_Table_Create_Parquet_Format
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+use nhl;
+
+show tables;
+
+SELECT * FROM nhl.team_info LIMIT 10;
+
+CREATE TABLE mydb_types.team_info_parquet USING PARQUET AS SELECT * FROM nhl.team_info;
+
+select * from mydb_types.team_info_parquet LIMIT 10;
+
+describe formatted mydb_types.team_info_parquet;
+
+hdfs dfs -ls hdfs://node2:8020/user/root/spark/warehouse/mydb_types.db/team_info_parquet

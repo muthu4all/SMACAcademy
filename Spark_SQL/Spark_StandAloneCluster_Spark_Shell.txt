@@ -1,0 +1,8 @@
+Spark_StandAloneCluster_Spark_Shell
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+./bin/spark-shell --master spark://ip-172-31-30-230.us-west-2.compute.internal:7077
+
+val textFile = spark.read.textFile("README.md")
+textFile.count()
+

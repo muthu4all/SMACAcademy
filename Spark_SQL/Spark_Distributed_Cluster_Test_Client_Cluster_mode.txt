@@ -1,0 +1,20 @@
+Spark_Distributed_Cluster_Test_Client_Cluster_mode
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+cd /home/ec2-user/spark_install/spark
+
+./sbin/start-master.sh
+
+
+./sbin/start-slave.sh spark://<<hostname/ipaddress>>:7077
+
+<<hostname/ipaddress>>:8080
+
+./bin/spark-submit --class org.apache.spark.examples.SparkPi --master spark://<<hostname/ipaddress>>:7077 ./examples/jars/spark-examples_2.11-2.3.1.jar 5
+
+
+./bin/spark-submit --class org.apache.spark.examples.SparkPi --master spark://<<hostname/ipaddress>>:7077 --deploy-mode client ./examples/jars/spark-examples_2.11-2.3.1.jar 5
+
+./bin/spark-submit --class org.apache.spark.examples.SparkPi --master spark://<<hostname/ipaddress>>:6066 --deploy-mode cluster ./examples/jars/spark-examples_2.11-2.3.1.jar 5
+

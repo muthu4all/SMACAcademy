@@ -1,0 +1,17 @@
+Dataset_Introduction
+~~~~~~~~~~~~~~~~~~~~
+
+val retailDF = spark.read.option("inferSchema","true").option("header","true").csv("/root/data/Online_Retail.csv")
+
+retailDF.printSchema
+
+
+retailDF.createOrReplaceTempView("RetailSales")
+
+
+spark.sql("select Description, count(StockCode) as ItemFrequency from RetailSales where UnitPrice > 0  group by Description order by ItemFrequency desc limit 20").show()
+
+
+case class RetailRow(InvoiceNo: String,StockCode: String,Description: String, Quantity: Integer, InvoiceDate: String, UnitPrice: Double, CustomerID: Integer, Country: String)
+
+val retailDS = retailDF.as[RetailRow]

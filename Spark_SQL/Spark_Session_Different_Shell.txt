@@ -1,0 +1,34 @@
+Spark_Session_Different_Shell
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cd /home/ec2-user/spark_install/spark
+
+./bin/spark-shell
+val textFile = spark.read.textFile("README.md")
+textFile.count()
+
+:q
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~`
+
+./bin/pyspark
+
+textFile = spark.read.text("README.md")
+textFile.count()
+
+quit()
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+./bin/spark-sql
+
+
+
+create database muthu4all;
+
+use muthu4all;
+
+create table employees(name string,salary long) using json options(path 'examples/src/main/resources/employees.json');
+
+select * from employees;
+drop table employees;
+quit
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

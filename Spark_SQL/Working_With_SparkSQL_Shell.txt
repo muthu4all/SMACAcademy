@@ -1,0 +1,38 @@
+Working_With_SparkSQL_Shell
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/usr/local/spark/bin
+
+./spark-sql
+
+./spark-sql --master spark://node5:7077
+
+
+drop database mydb0 cascade;
+
+CREATE DATABASE IF NOT EXISTS mydb0;
+describe database mydb0;
+
+show databases;
+
+
+/usr/local/spark/bin/spark-warehouse/mydb0.db
+use mydb0;
+
+show tables;
+
+drop table mydb0.employees;
+
+CREATE TABLE IF NOT EXISTS mydb0.employees (name STRING, age INTEGER) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+LOAD DATA LOCAL INPATH '/usr/local/spark/examples/src/main/resources/people.txt' INTO TABLE mydb0.employees;
+LOAD DATA LOCAL INPATH '/usr/local/spark/examples/src/main/resources/people_trim.txt' INTO TABLE mydb0.employees;
+
+select * from mydb0.employees;
+
+describe formatted mydb0.employees;
+
+file:/usr/local/spark/bin/spark-warehouse/mydb0.db/employees
+
+cp /usr/local/spark/examples/src/main/resources/people_trim.txt /usr/local/spark/bin/spark-warehouse/mydb0.db/employees/manual_copy.txt
+

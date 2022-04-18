@@ -1,0 +1,16 @@
+Spark_Partitions_Introduction
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+val retailDF = spark.read.option("inferSchema","true").option("header","true").csv("/root/data/Online_Retail.csv")
+
+retailDF.printSchema
+
+retailDF.rdd.getNumPartitions
+
+webUI port : 4040
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+val retailDF10 = retailDF.repartition(10)
+
+retailDF10.count

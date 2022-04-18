@@ -1,0 +1,12 @@
+Datasource_S3
+~~~~~~~~~~~~~
+
+
+spark-shell --packages com.amazonaws:aws-java-sdk-pom:1.10.34,org.apache.hadoop:hadoop-aws:2.7.2
+
+val hadoopConf = sc.hadoopConfiguration
+hadoopConf.set("fs.s3.impl", "org.apache.hadoop.fs.s3native.NativeS3FileSystem")
+hadoopConf.set("fs.s3.awsAccessKeyId", "XXXXXXXXXXXXXXXXXXXXXXXXX")
+hadoopConf.set("fs.s3.awsSecretAccessKey", "YYYYYYYYYYYYYYYYYYYYYYYYYYY")
+var s3file = sc.textFile("s3://<<bucketname>>/Online_Retail_Mini.csv")
+s3file.count

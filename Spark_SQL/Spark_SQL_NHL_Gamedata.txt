@@ -1,0 +1,131 @@
+Spark_SQL_NHL_Gamedata
+~~~~~~~~~~~~~~~~~~~~~~
+
+Source : https://www.kaggle.com/martinellis/nhl-game-data/home
+
+Files
+
+game.csv
+game_goalie_stats.csv
+game_plays.csv
+game_plays_players.csv
+game_shifts.csv
+game_skater_stats.csv
+game_teams_stats.csv
+player_info.csv
+team_info.csv
+
+
+/root/sample_data/nhl-game-data
+
+hdfs dfs -put /root/sample_data/nhl-game-data /sparksql/data/nhl-game-data
+
+
+spark-shell --master spark://node5:7077 --conf "spark.sql.warehouse.dir=hdfs://node2:8020/user/root/spark/warehouse"
+//spark-shell --master spark://node5:7077 --executor-memory 512m --executor-cores 2 --num-executors 3 --driver-memory 512m
+
+spark-sql --master spark://node5:7077 --conf "spark.sql.warehouse.dir=hdfs://node2:8020/user/root/spark/warehouse"
+
+
+
+spark.conf.set("spark.sql.warehouse.dir","hdfs://node2:8020/user/root/spark/warehouse")
+
+val gameDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/game.csv")
+
+val game_goalie_statsDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/game_goalie_stats.csv")
+
+val game_playsDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/game_plays.csv")
+
+val game_plays_playersDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/game_plays_players.csv")
+
+val game_shiftsDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/game_shifts.csv")
+
+val game_skater_statsDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/game_skater_stats.csv")
+
+val game_teams_statsDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/game_teams_stats.csv")
+
+val player_infoDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/player_info.csv")
+
+val team_infoDF = spark.read.format("csv").option("inferSchema","true").option("header","true").load("hdfs://node2:8020/sparksql/data/nhl-game-data/team_info.csv")
+
+
+gameDF.cache
+game_goalie_statsDF.cache
+game_playsDF.cache
+game_plays_playersDF.cache
+game_shiftsDF.cache
+game_skater_statsDF.cache
+game_teams_statsDF.cache
+player_infoDF.cache
+team_infoDF.cache
+
+
+gameDF.schema
+
+gameDF.printSchema
+
+
+gameDF.createOrReplaceTempView("tempgame")
+game_goalie_statsDF.createOrReplaceTempView("tempgame_goalie_stats")
+game_playsDF.createOrReplaceTempView("tempgame_plays")
+game_plays_playersDF.createOrReplaceTempView("tempgame_plays_players")
+game_shiftsDF.createOrReplaceTempView("tempgame_shifts")
+game_skater_statsDF.createOrReplaceTempView("tempgame_skater_stats")
+game_teams_statsDF.createOrReplaceTempView("tempgame_teams_stats")
+player_infoDF.createOrReplaceTempView("tempplayer_info")
+team_infoDF.createOrReplaceTempView("tempteam_info")
+
+
+spark.sql("drop database nhl cascade")
+
+spark.sql("create database nhl")
+
+spark.sql("Create table nhl.game as select * from tempgame")
+spark.sql("Create table nhl.game_goalie_stats as select * from tempgame_goalie_stats")
+spark.sql("Create table nhl.game_plays as select * from tempgame_plays")
+spark.sql("Create table nhl.game_plays_players as select * from tempgame_plays_players")
+spark.sql("Create table nhl.game_shifts as select * from tempgame_shifts")
+spark.sql("Create table nhl.game_skater_stats as select * from tempgame_skater_stats")
+spark.sql("Create table nhl.game_teams_stats as select * from tempgame_teams_stats")
+spark.sql("Create table nhl.player_info as select * from tempplayer_info")
+spark.sql("Create table nhl.team_info as select * from tempteam_info")
+
+
+spark-sql --master spark://node5:7077 --conf "spark.sql.warehouse.dir=hdfs://node2:8020/user/root/spark/warehouse"
+
+
+use nhl;
+
+cache table nhl.game;
+cache table nhl.game_goalie_stats;
+cache table nhl.game_plays;
+cache table nhl.game_plays_players;
+cache table nhl.game_shifts;
+cache table nhl.game_skater_stats;
+cache table nhl.game_teams_stats;
+cache table nhl.player_info;
+cache table nhl.team_info;
+
+
+
+SELECT nationality, COUNT(*) FROM player_info GROUP BY nationality;
+
+select player_id, sum(saves) as saves from nhl.game_goalie_stats group by player_id order by saves desc ;
+
+select first_value(pi.player_id),first_value(pi.firstName),first_value(pi.nationality), sum(ggs.saves) as saves 
+from nhl.game_goalie_stats ggs,nhl.player_info pi 
+where pi.player_id=ggs.player_id 
+group by ggs.player_id 
+order by saves desc;
+
+
+explain select first_value(ti.teamName),sum(gts.goals) as goals
+from nhl.team_info ti,nhl.game_teams_stats gts
+where ti.team_id =gts.team_id
+group by gts.team_id
+order by goals desc;
+
+
+use nhl;
+
+SHOW CREATE TABLE nhl.team_info;
